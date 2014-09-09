@@ -73,12 +73,18 @@
   }
 
   TouchCarousel.prototype._setPaneDimensions= function() {
+    this.$element.css({width: '', overflow: ''});
+    this.$itemsWrapper.css({ width: '' });
+    this.$items.css({ width: '', paddingBottom: '' });
+
     this.pane_width = this.$element.width();
     this.pane_count = this.$items.length;
 
+    this.$element.css({width: this.pane_width, overflow: 'hidden'});
+
     // Set items & wrapper to fixed width
     this.$itemsWrapper.width( this.pane_width * this.pane_count );
-    this.$items.width( this.pane_width );
+    this.$items.css({width: this.pane_width,paddingBottom: 0});
   }
 
   TouchCarousel.prototype._showPane= function( index ) {
@@ -184,8 +190,8 @@
           break;
 
       case 'release':
-        // more then 50% moved, navigate
-        if(Math.abs(e.gesture.deltaX) > this.pane_width/2) {
+        // more then 25% moved, navigate
+        if(Math.abs(e.gesture.deltaX) > this.pane_width/4) {
             if(e.gesture.direction == 'right') {
                 this.prev();
             } else {
@@ -211,8 +217,8 @@
       this.$indicators.find('.active').removeClass('active');
       this.$indicators.children().eq(index).addClass('active');
     }
-
-    this.$element.trigger('slid.bs.carousel');
+    
+    this.$element.trigger('slid.bs.carousel', index);
 
 
     return this;
