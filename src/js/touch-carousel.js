@@ -1,11 +1,6 @@
 +function ($) {
   "use strict";
 
-  /**
-   * Return whole plugin if touch is not supported
-   */
-  if (!("ontouchstart" in window || navigator.msMaxTouchPoints)) return false;
-
   // CONST
   var NAMESPACE = 'touch-carousel';
 
