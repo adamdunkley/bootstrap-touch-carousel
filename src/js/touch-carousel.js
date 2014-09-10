@@ -1,17 +1,10 @@
-+function ($) {
-  "use strict";
-
-  /**
-   * Return whole plugin if touch is not supported
-   */
-  if (!("ontouchstart" in window || navigator.msMaxTouchPoints)) return false;
 
   // CONST
-  var NAMESPACE = 'touch-carousel';
+  var NAMESPACE = 'touch-carousel',
 
   // TouchCarousel Constructor
   // -------------------
-  var TouchCarousel = function (element, options) {
+  TouchCarousel = function (element, options) {
     this.$element       = $(element)
     this.$itemsWrapper  = this.$element.find('.carousel-inner')
     this.$items         = this.$element.find('.item')
@@ -65,7 +58,7 @@
   TouchCarousel.prototype._regTouchGestures = function() {
     this.$itemsWrapper
       .add(this.$indicators) // fixes issue #9
-      .hammer({
+      .hammer({ 
         drag_lock_to_axis: true,
 		preventDefault: this.options.hasOwnProperty('preventDefault') ? this.options.preventDefault : true
       })
@@ -256,24 +249,26 @@
   }
 
 
+  var init = function() {
+      console.log(this);
+      var $this   = $(this), href
+      var $target = $($this.attr('data-target') || (href = $this.attr('href')) && href.replace(/.*(?=#[^\s]+$)/, '')) //strip for ie7
+      var options = $.extend({}, $target.data(), $this.data())
+      var slideIndex = $this.attr('data-slide-to')
+      if (slideIndex) options.interval = false
+
+      $target.carousel(options)
+
+      if (slideIndex = $this.attr('data-slide-to')) {
+          $target.data( NAMESPACE ).to(slideIndex)
+      }
+  }
+
   // CAROUSEL DATA-API
   // =================
 
   // unbind default carousel data-API
   $(document).off('click.bs.carousel').on('click.bs.carousel.data-api', '[data-slide], [data-slide-to]', function (e) {
-    var $this   = $(this), href
-    var $target = $($this.attr('data-target') || (href = $this.attr('href')) && href.replace(/.*(?=#[^\s]+$)/, '')) //strip for ie7
-    var options = $.extend({}, $target.data(), $this.data())
-    var slideIndex = $this.attr('data-slide-to')
-    if (slideIndex) options.interval = false
-
-    $target.carousel(options)
-
-    if (slideIndex = $this.attr('data-slide-to')) {
-      $target.data( NAMESPACE ).to(slideIndex)
-    }
-
+      $.proxy(init, this)();
     e.preventDefault()
-  });
-
-}(window.jQuery);
+  })
