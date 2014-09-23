@@ -20,10 +20,11 @@
     this._setPaneDimensions()
     // disable carousel if there is only one
     // or no item. (fixes # 6)
-    if (this.$items.length <= 1) return this.disable()
-
-    this._regTouchGestures()
-
+    if (this.$items.length <= 1) {
+        this.disable()
+    } else {
+        this._regTouchGestures()
+    }
     $(window).on('orientationchange resize', $.proxy(this._setPaneDimensions, this) );
   }
 
