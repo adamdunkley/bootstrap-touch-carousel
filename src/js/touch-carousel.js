@@ -69,11 +69,16 @@
   }
 
   TouchCarousel.prototype._setPaneDimensions= function() {
+    if (typeof this.windowWidth != undefined && this.windowWidth == $(window).width()) {
+        return;
+    }
+    this.windowWidth = $(window).width();
+
     this.$element.css({width: '', overflow: ''});
     this.$itemsWrapper.css({ width: '' });
     this.$items.css({ width: '', paddingBottom: '' });
 
-    this.pane_width = this.$element.width();
+    this.pane_width = this.$element.width() > this.windowWidth ? this.windowWidth : this.$element.width();
     this.pane_count = this.$items.length;
 
     this.$element.css({width: this.pane_width, overflow: 'hidden'});
