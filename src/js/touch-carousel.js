@@ -195,8 +195,8 @@ TouchCarousel.prototype._handleGestures = function( e ) {
             break;
 
         case 'release':
-            // more then 25% moved, navigate
-            if(Math.abs(e.gesture.deltaX) > this.pane_width/4) {
+            // more then 10% moved, navigate
+            if(Math.abs(e.gesture.deltaX) > this.pane_width/10) {
                 if(e.gesture.direction == 'right') {
                     this.prev();
                 } else {
