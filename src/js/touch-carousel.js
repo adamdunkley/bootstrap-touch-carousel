@@ -64,6 +64,8 @@ TouchCarousel.prototype._regTouchGestures = function() {
         .add(this.$indicators) // fixes issue #9
         .hammer({
             drag_lock_to_axis: true,
+            drag_block_horizontal: true,
+            drag_lock_min_distance: 250,
             preventDefault: this.options.hasOwnProperty('preventDefault') ? this.options.preventDefault : true
         })
         .on("release dragleft dragright swipeleft swiperight", $.proxy(this._handleGestures, this));
