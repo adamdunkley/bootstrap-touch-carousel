@@ -1,4 +1,4 @@
-+function ($) {
+(function touchCarousel($) {
     "use strict";
 
     // CONST
@@ -7,17 +7,17 @@
     // TouchCarousel Constructor
     // -------------------
     var TouchCarousel = function (element, options) {
-        this.$element       = $(element)
-        this.$itemsWrapper  = this.$element.find('.carousel-inner')
-        this.$items         = this.$element.find('.item')
-        this.$indicators    = this.$element.find('.carousel-indicators')
+        this.$element       = $(element);
+        this.$itemsWrapper  = this.$element.find('.carousel-inner');
+        this.$items         = this.$element.find('.item');
+        this.$indicators    = this.$element.find('.carousel-indicators');
         this.pane_width     =
             this.pane_count     =
-                this.current_pane   = 0
-        this.onGesture      = false
-        this.options        = options
+                this.current_pane   = 0;
+        this.onGesture      = false;
+        this.options        = options;
 
-        this._setPaneDimensions()
+        this._setPaneDimensions();
         // disable carousel if there is only one
         // or no item. (fixes # 6)
         if (this.$items.length <= 1) {
@@ -26,38 +26,38 @@
             this._regTouchGestures()
         }
         $(window).on('orientationchange resize', $.proxy(this._setPaneDimensions, this) );
-    }
+    };
 
 TouchCarousel.DEFAULTS = {
     interval: false,
     toughness: 0.25
-}
+};
 
 
 // TouchCarousel Prototype methods
 // -------------------
 
 TouchCarousel.prototype.cycle = function (e) {
-    if (!e) this.paused = false
+    if (!e) this.paused = false;
     if (this.interval) clearInterval(this.interval);
     this.options.interval
     && !this.paused
-    && (this.interval = setInterval($.proxy(this.next, this), this.options.interval))
+    && (this.interval = setInterval($.proxy(this.next, this), this.options.interval));
     return this
-}
+};
 
 TouchCarousel.prototype.to = function (pos) {
-    if (pos > (this.$items.length - 1) || pos < 0) return
+    if (pos > (this.$items.length - 1) || pos < 0) return;
     return this._showPane( pos );
-}
+};
 
 TouchCarousel.prototype.pause = function (e) {
-    if (!e) this.paused = true
+    if (!e) this.paused = true;
 
-    clearInterval(this.interval)
-    this.interval = null
-    return this
-}
+    clearInterval(this.interval);
+    this.interval = null;
+    return this;
+};
 
 TouchCarousel.prototype._regTouchGestures = function() {
     this.$itemsWrapper
@@ -69,7 +69,7 @@ TouchCarousel.prototype._regTouchGestures = function() {
             preventDefault: this.options.hasOwnProperty('preventDefault') ? this.options.preventDefault : true
         })
         .on("release dragleft dragright swipeleft swiperight", $.proxy(this._handleGestures, this));
-}
+};
 
 TouchCarousel.prototype._setPaneDimensions= function() {
     if (typeof this.windowWidth != undefined && this.windowWidth == $(window).width()) {
@@ -77,20 +77,28 @@ TouchCarousel.prototype._setPaneDimensions= function() {
     }
     this.windowWidth = $(window).width();
 
+    // Reset everything
     this.$element.css({width: '', overflow: ''});
     this.$itemsWrapper.css({ width: '' });
     this.$items.css({ width: '', paddingBottom: '' });
 
-    this.pane_width = ! this.$element.width() || (this.$element.width() > this.windowWidth) ? this.windowWidth : this.$element.width();
+    // Pane width if the element has no/little width or the element's width is bigger than the window
+    // is set to the window width
+    // otherwise we rely on the size of the element
+    this.pane_width = ! this.$element.width() || this.$element.width() < 200 || (this.$element.width() > this.windowWidth) ? this.windowWidth : this.$element.width();
     this.pane_count = this.$items.length;
 
+    // Set the width (hide anything over)
     this.$element.css({width: this.pane_width, overflow: 'hidden'});
 
     // Set items & wrapper to fixed width
+    // Wrapper is a pane's width times the pane count
     this.$itemsWrapper.width( this.pane_width * this.pane_count );
-    this.$items.css({width: this.pane_width,paddingBottom: 0});
+    // Each item is assigned to the pane width
+    this.$items.css({width: this.pane_width, paddingBottom: 0});
+    // Move the current pane in to view
     this._showPane( this.current_pane );
-}
+};
 
 TouchCarousel.prototype._showPane= function( index ) {
 
@@ -112,7 +120,7 @@ TouchCarousel.prototype._showPane= function( index ) {
     this._setContainerOffset(offset, true, index);
 
     return this;
-}
+};
 
 TouchCarousel.prototype._setContainerOffset= function(percent, animate, index) {
     var that = this;
@@ -151,15 +159,15 @@ TouchCarousel.prototype._setContainerOffset= function(percent, animate, index) {
         this.onGesture = false;
         this._updateIndicators(index);
     }
-}
+};
 
 TouchCarousel.prototype.next = function() {
     return this._showPane( this.current_pane+1 );
-}
+};
 
 TouchCarousel.prototype.prev = function() {
     return this._showPane( this.current_pane-1 );
-}
+};
 
 TouchCarousel.prototype._handleGestures = function( e ) {
 
@@ -208,14 +216,14 @@ TouchCarousel.prototype._handleGestures = function( e ) {
             }
             break;
     }
-}
+};
 
 TouchCarousel.prototype.disable = function() {
-    this.$indicators.hide()
+    this.$indicators.hide();
     this.$element.removeData( NAMESPACE );
 
     return false;
-}
+};
 
 TouchCarousel.prototype._updateIndicators = function(index) {
     if (this.$indicators.length) {
@@ -227,38 +235,44 @@ TouchCarousel.prototype._updateIndicators = function(index) {
 
 
     return this;
-}
+};
 
 // CAROUSEL PLUGIN DEFINITION
 // ==========================
 
-var old = $.fn.carousel
+var old = $.fn.carousel;
 
 // Overwrite default fn.carousel
 $.fn.carousel = function (option) {
     return this.each(function () {
-        var $this   = $(this)
-        var data    = $this.data( NAMESPACE )
-        var options = $.extend({}, TouchCarousel.DEFAULTS, $this.data(), typeof option == 'object' && option)
-        var action  = typeof option == 'string' ? option : options.slide
+        var $this   = $(this);
+        var data    = $this.data( NAMESPACE );
+        var options = $.extend({}, TouchCarousel.DEFAULTS, $this.data(), typeof option == 'object' && option);
+        var action  = typeof option == 'string' ? option : options.slide;
 
-        if (!data) $this.data( NAMESPACE, (data = new TouchCarousel(this, options))).addClass(NAMESPACE)
-        if (typeof option == 'number') data.to(option)
-        else if (action) data[action]()
-        else if (options.interval) data.pause().cycle()
+        if (!data) {
+            $this.data( NAMESPACE, (data = new TouchCarousel(this, options))).addClass(NAMESPACE);
+        }
+        if (typeof option == 'number') {
+            data.to(option);
+        } else if (action) {
+            data[action]();
+        } else if (options.interval) {
+            data.pause().cycle();
+        }
     })
-}
+};
 
-$.fn.carousel.Constructor = TouchCarousel
+$.fn.carousel.Constructor = TouchCarousel;
 
 
 // CAROUSEL NO CONFLICT
 // ====================
 
 $.fn.carousel.noConflict = function () {
-    $.fn.carousel = old
-    return this
-}
+    $.fn.carousel = old;
+    return this;
+};
 
 
 // CAROUSEL DATA-API
@@ -266,13 +280,13 @@ $.fn.carousel.noConflict = function () {
 
 // unbind default carousel data-API
 $(document).off('click.bs.carousel').on('click.bs.carousel.data-api', '[data-slide], [data-slide-to]', function (e) {
-    var $this   = $(this), href
-    var $target = $($this.attr('data-target') || (href = $this.attr('href')) && href.replace(/.*(?=#[^\s]+$)/, '')) //strip for ie7
-    var options = $.extend({}, $target.data(), $this.data())
-    var slideIndex = $this.attr('data-slide-to')
-    if (slideIndex) options.interval = false
+    var $this   = $(this), href;
+    var $target = $($this.attr('data-target') || (href = $this.attr('href')) && href.replace(/.*(?=#[^\s]+$)/, '')); //strip for ie7
+    var options = $.extend({}, $target.data(), $this.data());
+    var slideIndex = $this.attr('data-slide-to');
+    if (slideIndex) options.interval = false;
 
-    $target.carousel(options)
+    $target.carousel(options);
 
     if (slideIndex = $this.attr('data-slide-to')) {
         $target.data( NAMESPACE ).to(slideIndex)
@@ -281,4 +295,4 @@ $(document).off('click.bs.carousel').on('click.bs.carousel.data-api', '[data-sli
     e.preventDefault()
 });
 
-}(window.jQuery);
+})(window.jQuery);
