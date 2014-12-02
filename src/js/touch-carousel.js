@@ -13,7 +13,7 @@
         this.$indicators    = this.$element.find('.carousel-indicators');
         this.pane_width     =
             this.pane_count     =
-                this.current_pane   = 0;
+                this.current_pane   = this.$element.find('.active').index();
         this.onGesture      = false;
         this.options        = options;
 
